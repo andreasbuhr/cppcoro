@@ -144,7 +144,7 @@ TEST_CASE("multi-threaded")
 
 	cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
 
-	CHECK_MESSAGE(max_depth < 500, "Maximum depth of nested continuations exceeded");
+	CHECK_MESSAGE(max_depth == 0, "Nested continuations detected");
 }
 
 TEST_SUITE_END();
