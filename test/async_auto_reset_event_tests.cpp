@@ -91,6 +91,8 @@ TEST_CASE("multi-threaded")
 {
 	cppcoro::static_thread_pool tp{ 3 };
 
+	unsigned max_depth = 0;
+
 	auto run = [&]() -> cppcoro::task<>
 	{
 		cppcoro::async_auto_reset_event event;
@@ -102,7 +104,13 @@ TEST_CASE("multi-threaded")
 			co_await tp.schedule();
 			co_await event;
 			++value;
+
+			thread_local unsigned depth = 0;
+			if (depth > max_depth) max_depth = depth;
+
+			depth += 1;
 			event.set();
+			depth -= 1;
 		};
 
 		auto startSignaller = [&]() -> cppcoro::task<>
@@ -135,6 +143,8 @@ TEST_CASE("multi-threaded")
 	}
 
 	cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
+
+	CHECK_MESSAGE(max_depth < 500, "Maximum depth of nested continuations exceeded");
 }
 
 TEST_SUITE_END();
