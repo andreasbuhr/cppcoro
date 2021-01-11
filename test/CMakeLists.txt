@@ -47,7 +47,7 @@ if(WIN32)
     )
 else()
 	# let more time for some tests
-	set(async_auto_reset_event_tests_TIMEOUT 60)
+	set(async_auto_reset_event_tests_TIMEOUT 200)
 endif()
 
 foreach(test ${tests})
