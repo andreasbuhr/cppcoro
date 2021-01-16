@@ -102,6 +102,18 @@ TEST_CASE("multi-threaded")
 			co_await tp.schedule();
 			co_await event;
 			++value;
+
+			thread_local volatile bool nested = false;
+
+			if (nested)
+			{
+				co_await tp.schedule();
+				assert(!nested);
+			}
+
+			nested = true;
+			cppcoro::scoped_lambda cleanup = [] { nested = false; };
+
 			event.set();
 		};
 
