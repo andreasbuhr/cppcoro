@@ -60,3 +60,72 @@ foreach(test ${tests})
 	endif()
 	doctest_discover_tests(${test_name} TEST_PREFIX ${test_prefix}- PROPERTIES TIMEOUT ${${test_name}_TIMEOUT})
 endforeach()
+
+function(add_usage_test variant_name cppcoro_ROOT)
+	set(APP_BINARY_DIR ${CPPCORO_USAGE_TEST_DIR}/app_build/${variant_name})
+	add_test(
+		NAME app_configure_${variant_name}
+		COMMAND
+			${CMAKE_COMMAND} 
+				-S ${CMAKE_CURRENT_LIST_DIR}/use_cppcoro
+				-B ${APP_BINARY_DIR}
+				-G ${CMAKE_GENERATOR}
+				-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+				-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+				-D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+				-D cppcoro_ROOT=${cppcoro_ROOT}
+	)
+	add_test(
+		NAME app_build_${variant_name}
+		COMMAND
+			${CMAKE_COMMAND}
+				--build ${APP_BINARY_DIR}
+				--config ${CMAKE_BUILD_TYPE}
+	)
+	set_tests_properties(
+		app_configure_${variant_name}
+		PROPERTIES
+			FIXTURES_SETUP app_build_${variant_name}_requires
+			TIMEOUT 30
+	)
+	set_tests_properties(
+		app_build_${variant_name}
+		PROPERTIES
+			FIXTURES_REQUIRED app_build_${variant_name}_requires
+			TIMEOUT 30
+	)
+endfunction()
+
+if(CPPCORO_USAGE_TEST_DIR)
+	if(NOT IS_ABSOLUTE ${CPPCORO_USAGE_TEST_DIR})
+		set(CPPCORO_USAGE_TEST_DIR ${PROJECT_BINARY_DIR}/${CPPCORO_USAGE_TEST_DIR})
+	endif()
+
+	add_usage_test(with_cppcoro_build_tree ${PROJECT_BINARY_DIR})
+
+	if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+		set(CPPCORO_USAGE_TEST_INSTALL_DIR ${CPPCORO_USAGE_TEST_DIR}/cppcoro_install)
+	
+		add_usage_test(with_cppcoro_install_dir ${CPPCORO_USAGE_TEST_INSTALL_DIR})
+	
+		add_test(
+			NAME cppcoro_usage_test_install
+			COMMAND
+				${CMAKE_COMMAND}
+					--install ${PROJECT_BINARY_DIR}
+					--config ${CMAKE_BUILD_TYPE}
+					--prefix ${CPPCORO_USAGE_TEST_INSTALL_DIR}
+		)
+		set_tests_properties(
+			cppcoro_usage_test_install
+			PROPERTIES
+				FIXTURES_SETUP app_configure_with_cppcoro_install_dir_requires
+				TIMEOUT 30
+		)
+		set_tests_properties(
+			app_configure_with_cppcoro_install_dir
+			PROPERTIES
+				FIXTURES_REQUIRED app_configure_with_cppcoro_install_dir_requires
+		)
+	endif()
+endif()
