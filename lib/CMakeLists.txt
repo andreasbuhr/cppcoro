@@ -167,6 +167,7 @@ target_include_directories(cppcoro PUBLIC
 	$<INSTALL_INTERFACE:include>)
 
 target_compile_definitions(cppcoro PUBLIC ${compile_definition})
+target_compile_features(cppcoro PUBLIC cxx_std_20)
 target_compile_options(cppcoro PUBLIC ${compile_options})
 
 find_package(Coroutines COMPONENTS Experimental Final REQUIRED)
