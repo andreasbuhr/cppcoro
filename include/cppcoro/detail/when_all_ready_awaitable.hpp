@@ -9,6 +9,7 @@
 
 #include <cppcoro/coroutine.hpp>
 #include <tuple>
+#include <initializer_list>
 
 namespace cppcoro
 {

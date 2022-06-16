@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <exception>
 
 namespace cppcoro
 {
