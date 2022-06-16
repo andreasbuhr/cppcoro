@@ -22,14 +22,14 @@ jobs:
         config:
           - {
             name: "Linux g++ 10.2 C++17",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "g++-10",
             cxxver: 17,
           }
           - {
             name: "Linux g++ 10.2 C++20",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "g++-10",
             cxxver: 20,
@@ -50,14 +50,14 @@ jobs:
           }
           - {
             name: "Linux g++ 11 C++17",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Debug,
             cxx: "g++-11",
             cxxver: 17,
           }
           - {
             name: "Linux g++ 11 C++20",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "g++-11",
             cxxver: 20,
@@ -146,7 +146,7 @@ jobs:
           }
           - {
             name: "Linux clang-13 C++17",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-13",
             cxx_flags: -stdlib=libc++,
@@ -155,7 +155,7 @@ jobs:
           }
           - {
             name: "Linux clang-13 C++20",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-13",
             cxx_flags: -stdlib=libc++,
@@ -164,7 +164,7 @@ jobs:
           }
           - {
             name: "Linux clang-14 C++17",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-14",
             cxx_flags: -stdlib=libc++,
@@ -173,7 +173,7 @@ jobs:
           }
           - {
             name: "Linux clang-14 C++20",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-14",
             cxx_flags: -stdlib=libc++,
@@ -182,7 +182,7 @@ jobs:
           }
           - {
             name: "Linux clang-15 C++17 Debug",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Debug,
             cxx: "clang++-15",
             cxx_flags: -stdlib=libc++,
@@ -191,7 +191,7 @@ jobs:
           }
           - {
             name: "Linux clang-15 C++20 Debug",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Debug,
             cxx: "clang++-15",
             cxx_flags: -stdlib=libc++,
@@ -200,7 +200,7 @@ jobs:
           }
           - {
             name: "Linux clang-15 C++17",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-15",
             cxx_flags: -stdlib=libc++,
@@ -209,7 +209,7 @@ jobs:
           }
           - {
             name: "Linux clang-15 C++20",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-15",
             cxx_flags: -stdlib=libc++,
