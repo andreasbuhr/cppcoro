@@ -80,6 +80,38 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux clang-13 C++17",
+            os: ubuntu-20.04,
+            cxx: "clang++-13",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 17,
+          }
+          - {
+            name: "Linux clang-13 C++20",
+            os: ubuntu-20.04,
+            cxx: "clang++-13",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-14 C++17",
+            os: ubuntu-20.04,
+            cxx: "clang++-14",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 17,
+          }
+          - {
+            name: "Linux clang-14 C++20",
+            os: ubuntu-20.04,
+            cxx: "clang++-14",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
             name: "Windows MSVC 2017 (x64) C++17",
             os: windows-2016,
             cxx: "cl",
@@ -143,6 +175,28 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 12
         sudo apt-get install libc++-12-dev libc++abi-12-dev libunwind-12-dev
+
+    - name: Install Clang 13
+      id: install_clang_13
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-13' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 13
+        sudo apt-get install libc++-13-dev libc++abi-13-dev libunwind-13-dev
+
+    - name: Install Clang 14
+      id: install_clang_14
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-14' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        sudo apt-get install libc++-14-dev libc++abi-14-dev libunwind-14-dev
 
     - name: Install g++ 10
       id: install_gcc_10
