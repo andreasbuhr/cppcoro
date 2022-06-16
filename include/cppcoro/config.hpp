@@ -156,7 +156,21 @@
     #ifdef __cpp_lib_coroutine
     #define CPPCORO_COROHEADER_FOUND_AND_USABLE
     #endif
-    #endif
+	#endif
+#elif CPPCORO_COMPILER_CLANG
+	# if __clang_major__ >= 14
+	    // clang 14 in c++-17 mode has a non-usable coroutine header
+		#if __has_include(<coroutine>)
+		#include <coroutine>
+		#ifdef __cpp_lib_coroutine
+		#define CPPCORO_COROHEADER_FOUND_AND_USABLE
+		#endif
+		#endif
+	# else
+		#if __has_include(<coroutine>)
+		#define CPPCORO_COROHEADER_FOUND_AND_USABLE
+		#endif
+	# endif
 #else
     #if __has_include(<coroutine>)
     #define CPPCORO_COROHEADER_FOUND_AND_USABLE
