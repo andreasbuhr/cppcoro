@@ -86,7 +86,7 @@ namespace cppcoro
 			struct promise_type
 			{
 				cppcoro::suspend_never initial_suspend() { return {}; }
-				cppcoro::suspend_never final_suspend() { return {}; }
+				cppcoro::suspend_never final_suspend() noexcept { return {}; }
 				void unhandled_exception() { std::terminate(); }
 				oneway_task get_return_object() { return {}; }
 				void return_void() {}
