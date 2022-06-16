@@ -17,6 +17,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <cassert>
+#include <new>
 
 #include <cppcoro/coroutine.hpp>
 
