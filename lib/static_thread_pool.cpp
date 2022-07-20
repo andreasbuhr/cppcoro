@@ -65,9 +65,12 @@ namespace cppcoro
 			return false;
 		}
 
-		void notify_intent_to_sleep() noexcept
+		// The return value will be true if the notification was successful, i.e.,
+		// if the thread was not yet marked to be asleep.
+		bool notify_intent_to_sleep() noexcept
 		{
-			m_isSleeping.store(true, std::memory_order_relaxed);
+			bool wasSleeping = m_isSleeping.exchange(true, std::memory_order_seq_cst);
+			return !wasSleeping;
 		}
 
 		void sleep_until_woken() noexcept
@@ -599,11 +602,13 @@ namespace cppcoro
 	void static_thread_pool::notify_intent_to_sleep(std::uint32_t threadIndex) noexcept
 	{
 		// First mark the thread as asleep
-		m_threadStates[threadIndex].notify_intent_to_sleep();
-
-		// Then publish the fact that a thread is asleep by incrementing the count
-		// of threads that are asleep.
-		m_sleepingThreadCount.fetch_add(1, std::memory_order_seq_cst);
+		if (m_threadStates[threadIndex].notify_intent_to_sleep())
+		{
+			// If the thread was not yet marked before to be asleep,
+			// then publish the fact that the thread is now asleep by incrementing the count
+			// of threads that are asleep.
+			m_sleepingThreadCount.fetch_add(1, std::memory_order_seq_cst);
+		}
 	}
 
 	void static_thread_pool::try_clear_intent_to_sleep(std::uint32_t threadIndex) noexcept
