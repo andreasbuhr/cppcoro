@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <forward_list>
+#include <cstdint>
 
 #include "doctest/cppcoro_doctest.h"
 
