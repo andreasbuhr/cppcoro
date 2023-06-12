@@ -2,6 +2,7 @@ name: CMake
 
 on: [push, pull_request]
 
+
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally
