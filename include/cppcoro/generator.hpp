@@ -78,8 +78,8 @@ namespace cppcoro
 
 		private:
 
-			pointer_type m_value;
-			std::exception_ptr m_exception;
+			pointer_type m_value{};
+			std::exception_ptr m_exception{};
 
 		};
 

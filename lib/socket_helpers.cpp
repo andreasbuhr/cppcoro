@@ -4,17 +4,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "socket_helpers.hpp"
-
+#include <functional>
 #include <cppcoro/net/ip_endpoint.hpp>
 
 #if CPPCORO_OS_WINNT
 #include <cstring>
 #include <cassert>
 
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <MSWSock.h>
-#include <Windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <mswsock.h>
+#include <windows.h>
 
 
 cppcoro::net::ip_endpoint

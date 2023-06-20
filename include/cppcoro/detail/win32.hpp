@@ -35,7 +35,7 @@ namespace cppcoro
 #endif
 
 			/// Structure needs to correspond exactly to the builtin
-			/// _OVERLAPPED structure from Windows.h.
+			/// _OVERLAPPED structure from windows.h.
 			struct overlapped
 			{
 				ulongptr_t Internal;

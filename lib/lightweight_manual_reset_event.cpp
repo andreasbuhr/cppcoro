@@ -11,7 +11,7 @@
 # ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
 # endif
-# include <Windows.h>
+# include <windows.h>
 
 # if CPPCORO_OS_WINNT >= 0x0602
 

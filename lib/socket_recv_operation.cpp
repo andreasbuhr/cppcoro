@@ -7,10 +7,10 @@
 #include <cppcoro/net/socket.hpp>
 
 #if CPPCORO_OS_WINNT
-# include <WinSock2.h>
-# include <WS2tcpip.h>
-# include <MSWSock.h>
-# include <Windows.h>
+# include <winsock2.h>
+# include <ws2tcpip.h>
+# include <mswsock.h>
+# include <windows.h>
 
 bool cppcoro::net::socket_recv_operation_impl::try_start(
 	cppcoro::detail::win32_overlapped_operation_base& operation) noexcept

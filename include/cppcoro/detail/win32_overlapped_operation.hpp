@@ -135,7 +135,7 @@ namespace cppcoro
 		class win32_overlapped_operation_cancellable
 			: protected win32_overlapped_operation_base
 		{
-			// ERROR_OPERATION_ABORTED value from <Windows.h>
+			// ERROR_OPERATION_ABORTED value from <windows.h>
 			static constexpr detail::win32::dword_t error_operation_aborted = 995L;
 
 		protected:

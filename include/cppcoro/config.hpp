@@ -78,6 +78,10 @@
 /// 0x0602 - Windows 8
 /// 0x0603 - Windows 8.1
 /// 0x0A00 - Windows 10
+#ifdef __MINGW32__
+#define SCOPEID_UNSPECIFIED_INIT {0}
+#define _WIN32_WINNT 0x0601
+#endif
 #if defined(_WIN32_WINNT) || defined(_WIN32)
 # if !defined(_WIN32_WINNT)
 // Default to targeting Windows 10 if not defined.

@@ -9,7 +9,7 @@
 # ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
 # endif
-# include <Windows.h>
+# include <windows.h>
 
 bool cppcoro::file_read_operation_impl::try_start(
 	cppcoro::detail::win32_overlapped_operation_base& operation) noexcept
