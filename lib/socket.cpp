@@ -21,6 +21,8 @@
 # include <ws2tcpip.h>
 # include <mswsock.h>
 # include <windows.h>
+# include <memory>
+# include <cstring>
 
 namespace
 {

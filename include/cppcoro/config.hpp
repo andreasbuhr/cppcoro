@@ -80,7 +80,6 @@
 /// 0x0A00 - Windows 10
 #ifdef __MINGW32__
 #define SCOPEID_UNSPECIFIED_INIT {0}
-#define _WIN32_WINNT 0x0601
 #endif
 #if defined(_WIN32_WINNT) || defined(_WIN32)
 # if !defined(_WIN32_WINNT)

@@ -17,6 +17,7 @@
 #include <thread>
 #include <cassert>
 #include <string>
+#include <cstring>
 
 #include "io_service_fixture.hpp"
 
