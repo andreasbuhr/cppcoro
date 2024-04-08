@@ -73,6 +73,7 @@ namespace cppcoro
 			bool message_queue::enqueue_message(void* msg, message_type type)
 			{
 				message qmsg;
+				std::memset(&qmsg, 0, sizeof(qmsg));
 				qmsg.m_type = type;
 				qmsg.m_ptr = msg;
 				int status = write(m_pipefd[1], (const char*)&qmsg, sizeof(message));
