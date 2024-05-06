@@ -234,6 +234,24 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Windows MSVC 2017 (x64) C++17 Debug",
+            os: windows-2019,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 17,
+            msvcver: 2017,
+          }
+          - {
+            name: "Windows MSVC 2017 (x64) C++20 Debug",
+            os: windows-2019,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+            msvcver: 2017,
+          }
+          - {
             name: "Windows MSVC 2017 (x64) C++17",
             os: windows-2019,
             buildtype: Release,
@@ -252,6 +270,22 @@ jobs:
             msvcver: 2017,
           }
           - {
+            name: "Windows MSVC 2019 (x64) C++17 Debug",
+            os: windows-2019,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 17,
+          }
+          - {
+            name: "Windows MSVC 2019 (x64) C++20 Debug",
+            os: windows-2019,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+          }
+          - {
             name: "Windows MSVC 2019 (x64) C++17",
             os: windows-2019,
             buildtype: Release,
@@ -265,6 +299,22 @@ jobs:
             buildtype: Release,
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+          }
+          - {
+            name: "Windows MSVC 2022 (x64) C++17 Debug",
+            os: windows-2022,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 17,
+          }
+          - {
+            name: "Windows MSVC 2022 (x64) C++20 Debug",
+            os: windows-2022,
+            buildtype: Debug,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
             cxxver: 20,
           }
           - {
