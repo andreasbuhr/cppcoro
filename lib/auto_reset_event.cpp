@@ -6,7 +6,9 @@
 #include "auto_reset_event.hpp"
 
 #if CPPCORO_OS_WINNT
-# define WIN32_LEAN_AND_MEAN
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 # include <windows.h>
 # include <system_error>
 #endif
