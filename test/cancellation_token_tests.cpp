@@ -8,6 +8,7 @@
 #include <cppcoro/cancellation_registration.hpp>
 #include <cppcoro/operation_cancelled.hpp>
 
+#include <chrono>
 #include <thread>
 
 #include <ostream>
