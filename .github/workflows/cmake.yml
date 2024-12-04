@@ -90,6 +90,20 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux g++ 14 C++17",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "g++-14",
+            cxxver: 17,
+          }
+          - {
+            name: "Linux g++ 14 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "g++-14",
+            cxxver: 20,
+          }
+          - {
             name: "Linux clang-10 C++17",
             os: ubuntu-20.04,
             buildtype: Release,
@@ -229,6 +243,33 @@ jobs:
             os: ubuntu-22.04,
             buildtype: Release,
             cxx: "clang++-16",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-17 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-17",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-18 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-18",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-19 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-19",
             cxx_flags: -stdlib=libc++,
             exe_linker_flags: -lc++,
             cxxver: 20,
@@ -413,6 +454,39 @@ jobs:
         sudo ./llvm.sh 16
         sudo apt-get install libc++-16-dev libc++abi-16-dev libunwind-16-dev
 
+    - name: Install Clang 17
+      id: install_clang_17
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-17' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 17
+        sudo apt-get install libc++-17-dev libc++abi-17-dev libunwind-17-dev
+
+    - name: Install Clang 18
+      id: install_clang_18
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-18' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 18
+        sudo apt-get install libc++-18-dev libc++abi-18-dev libunwind-18-dev
+
+    - name: Install Clang 19
+      id: install_clang_19
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-19' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 19
+        sudo apt-get install libc++-19-dev libc++abi-19-dev libunwind-19-dev
+
     - name: Install g++ 10
       id: install_gcc_10
       if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-10' )
@@ -447,6 +521,15 @@ jobs:
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
         sudo apt-get install g++-13
+
+    - name: Install g++ 14
+      id: install_gcc_14
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-14' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
+        sudo apt-get install g++-14
 
     - name: Install MSVC 2017
       id: install_msvc_2017
