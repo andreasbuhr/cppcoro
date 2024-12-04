@@ -35,14 +35,14 @@ jobs:
           }
           - {
             name: "Linux g++ 11 C++17 Debug",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Debug,
             cxx: "g++-11",
             cxxver: 17,
           }
           - {
             name: "Linux g++ 11 C++20 Debug",
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             buildtype: Release,
             cxx: "g++-11",
             cxxver: 20,
@@ -77,14 +77,14 @@ jobs:
           }
           - {
             name: "Linux g++ 13 C++17",
-            os: ubuntu-22.04,
+            os: ubuntu-24.04,
             buildtype: Release,
             cxx: "g++-13",
             cxxver: 17,
           }
           - {
             name: "Linux g++ 13 C++20",
-            os: ubuntu-22.04,
+            os: ubuntu-24.04,
             buildtype: Release,
             cxx: "g++-13",
             cxxver: 20,
