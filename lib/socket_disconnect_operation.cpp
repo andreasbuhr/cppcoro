@@ -112,7 +112,7 @@ void cppcoro::net::socket_disconnect_operation_impl::get_result(
 bool cppcoro::net::socket_disconnect_operation_impl::try_start(
 	cppcoro::detail::linux_async_operation_base& operation) noexcept
 {
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		operation.m_mq->remove_fd_watch(m_socket.native_handle());
 		int res = m_socket.close();
 		return res;

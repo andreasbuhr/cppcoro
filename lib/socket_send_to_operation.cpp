@@ -81,7 +81,7 @@ bool cppcoro::net::socket_send_to_operation_impl::try_start(
 	sockaddr_storage destinationAddress = {0};
 	const socklen_t destinationLength = detail::ip_endpoint_to_sockaddr(
 		m_destination, std::ref(destinationAddress));
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		int res = sendto(
 			m_socket.native_handle(), m_buffer, m_byteCount, 0,
 			reinterpret_cast<const sockaddr*>(&destinationAddress),

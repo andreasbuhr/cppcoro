@@ -109,7 +109,7 @@ bool cppcoro::net::socket_recv_from_operation_impl::try_start(
 		sockaddrStorageAlignment >= alignof(sockaddr_in6));
 	m_sourceSockaddrLength = sizeof(m_sourceSockaddrStorage);
 
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		int res = recvfrom(
 			m_socket.native_handle(), m_buffer, m_byteCount, MSG_TRUNC,
 			reinterpret_cast<sockaddr*>(&m_sourceSockaddrStorage),
