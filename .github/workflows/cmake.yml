@@ -325,6 +325,14 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Windows MSVC 2022 (aarch64) C++20",
+            os: windows-11-arm,
+            buildtype: Release,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+          }
+          - {
             name: "Msys2/CLANG",
             os: windows-2019,
             buildtype: Release,
