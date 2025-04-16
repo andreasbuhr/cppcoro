@@ -104,60 +104,6 @@ jobs:
             cxxver: 20,
           }
           - {
-            name: "Linux clang-10 C++17",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-10",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 17,
-          }
-          - {
-            name: "Linux clang-10 C++20",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-10",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 20,
-          }
-          - {
-            name: "Linux clang-11 C++17",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-11",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 17,
-          }
-          - {
-            name: "Linux clang-11 C++20",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-11",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 20,
-          }
-          - {
-            name: "Linux clang-12 C++17",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-12",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 17,
-          }
-          - {
-            name: "Linux clang-12 C++20",
-            os: ubuntu-22.04,
-            buildtype: Release,
-            cxx: "clang++-12",
-            cxx_flags: -stdlib=libc++,
-            exe_linker_flags: -lc++,
-            cxxver: 20,
-          }
-          - {
             name: "Linux clang-13 C++17",
             os: ubuntu-22.04,
             buildtype: Release,
@@ -384,39 +330,6 @@ jobs:
           mingw-w64-${{ matrix.config.mingw-arch }}-${{ matrix.config.cxx }}
           mingw-w64-${{ matrix.config.mingw-arch }}-toolchain
         update: true
-
-    - name: Install Clang 10
-      id: install_clang_10
-      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-10' )
-      shell: bash
-      working-directory: ${{ env.HOME }}
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 10
-        sudo apt-get install libc++-10-dev libc++abi-10-dev
-
-    - name: Install Clang 11
-      id: install_clang_11
-      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-11' )
-      shell: bash
-      working-directory: ${{ env.HOME }}
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 11
-        sudo apt-get install libc++-11-dev libc++abi-11-dev
-
-    - name: Install Clang 12
-      id: install_clang_12
-      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-12' )
-      shell: bash
-      working-directory: ${{ env.HOME }}
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 12
-        sudo apt-get install libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
     - name: Install Clang 13
       id: install_clang_13
