@@ -60,7 +60,7 @@ bool cppcoro::file_read_operation_impl::try_start(
 		operation.m_res = -errno;
 		return false;
 	}
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		int res = read(m_fd, m_buffer, m_byteCount);
 		operation.m_mq->remove_fd_watch(m_fd);
 		return res;

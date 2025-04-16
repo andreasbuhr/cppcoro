@@ -194,7 +194,7 @@ bool cppcoro::net::socket_connect_operation_impl::try_start(
 		operation.m_res = -errno;
 		return false;
 	}
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, remoteSockaddrStorage, sockaddrNameLength, this]() {
 		int res = connect(m_socket.native_handle(), reinterpret_cast<const sockaddr*>(&remoteSockaddrStorage), sockaddrNameLength);
 		operation.m_mq->remove_fd_watch(m_socket.native_handle());
 		return res;

@@ -69,7 +69,7 @@ void cppcoro::net::socket_send_operation_impl::cancel(
 bool cppcoro::net::socket_send_operation_impl::try_start(
 	cppcoro::detail::linux_async_operation_base& operation) noexcept
 {
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		int res = send(m_socket.native_handle(), m_buffer, m_byteCount, 0);
 		operation.m_mq->remove_fd_watch(m_socket.native_handle());
 		return res;

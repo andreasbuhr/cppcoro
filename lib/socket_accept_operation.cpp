@@ -138,7 +138,7 @@ bool cppcoro::net::socket_accept_operation_impl::try_start(
 		(sizeof(m_addressBuffer) / 2) >= (16 + sizeof(sockaddr_in6)),
 		"AcceptEx requires address buffer to be at least 16 bytes more than largest address.");
 
-	operation.m_completeFunc = [=]() {
+	operation.m_completeFunc = [operation, this]() {
 		socklen_t len = sizeof(m_addressBuffer) / 2;
 		int res = accept(m_listeningSocket.native_handle(), reinterpret_cast<sockaddr*>(m_addressBuffer), &len);
 		operation.m_mq->remove_fd_watch(m_listeningSocket.native_handle());
