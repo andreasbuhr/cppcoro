@@ -38,14 +38,14 @@ namespace cppcoro
 		/// A cancellation source object will not be cancellable if it has
 		/// previously been moved into another cancellation_source instance
 		/// or was copied from a cancellation_source that was not cancellable.
-		bool can_be_cancelled() const noexcept;
+		[[nodiscard]] bool can_be_cancelled() const noexcept;
 
 		/// Obtain a cancellation token that can be used to query if
 		/// cancellation has been requested on this source.
 		///
 		/// The cancellation token can be passed into functions that you
 		/// may want to later be able to request cancellation.
-		cancellation_token token() const noexcept;
+		[[nodiscard]] cancellation_token token() const noexcept;
 
 		/// Request cancellation of operations that were passed an associated
 		/// cancellation token.
@@ -59,7 +59,7 @@ namespace cppcoro
 
 		/// Query if some thread has called 'request_cancellation()' on this
 		/// cancellation_source.
-		bool is_cancellation_requested() const noexcept;
+		[[nodiscard]] bool is_cancellation_requested() const noexcept;
 
 	private:
 
