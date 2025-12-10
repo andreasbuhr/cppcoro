@@ -531,9 +531,10 @@ jobs:
       if: startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2026 )
       shell: powershell
       run: |
-        choco install visualstudio2026community --yes --no-progress --execution-timeout=7200 `
-          --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --passive --locale en-US"
-        choco install visualstudio2026-workload-nativedesktop --yes --no-progress --execution-timeout=7200
+        choco feature disable --name="'exitOnRebootDetected'"
+        choco install visualstudio2026community
+        choco install visualstudio2026-workload-nativedesktop
+        choco install visualstudio2026-workload-vctools
 
     - name: MSYS2 - Configure, Build & Test
       id: install_msys2
