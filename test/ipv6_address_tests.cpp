@@ -109,6 +109,35 @@ TEST_CASE("from_string")
 		ipv6_address(0x20010db885a308d3, 0x13198a2e03707348));
 }
 
+TEST_CASE("round-trip and normalization")
+{
+    auto check_round_trip = [](const char* s) {
+        auto p = ipv6_address::from_string(s);
+        REQUIRE(p.has_value());
+        auto canon = p->to_string();
+        auto p2 = ipv6_address::from_string(canon);
+        REQUIRE(p2.has_value());
+        CHECK(*p == *p2);
+        CHECK(p2->to_string() == canon);
+    };
+
+    // Basic
+    check_round_trip("::");
+    check_round_trip("::1");
+    check_round_trip("FFFF:0000:0000:0000:0000:0000:0000:0001");
+
+    // Mixed case input should normalise to lower-case
+    check_round_trip("AbCd:Ef01::");
+
+    // IPv4 interop
+    check_round_trip("::ffff:192.168.0.1");
+
+    // Ordering stability already covered elsewhere; here just ensure canonical contraction is stable
+    auto p = ipv6_address::from_string("0001:0010:0100:1000::");
+    REQUIRE(p.has_value());
+    CHECK(p->to_string() == std::string("1:10:100:1000::"));
+}
+
 TEST_CASE("from_string IPv4 interop format")
 {
 	CHECK(
