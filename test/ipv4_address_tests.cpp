@@ -87,4 +87,31 @@ TEST_CASE("from_string")
 	CHECK(ipv4_address::from_string("0.0.0.0") == ipv4_address(0, 0, 0, 0));
 	CHECK(ipv4_address::from_string("1.2.3.4") == ipv4_address(1, 2, 3, 4));
 }
+
+TEST_CASE("round-trip and ordering")
+{
+    // Round-trip canonicalisation via to_string()/from_string()
+    auto check_round_trip = [](const char* s) {
+        auto p = ipv4_address::from_string(s);
+        REQUIRE(p.has_value());
+        auto canon = p->to_string();
+        auto p2 = ipv4_address::from_string(canon);
+        REQUIRE(p2.has_value());
+        CHECK(*p == *p2);
+        CHECK(p2->to_string() == canon); // stable
+    };
+
+    check_round_trip("0.0.0.0");
+    check_round_trip("255.255.255.255");
+    check_round_trip("192.168.0.1");
+
+    // Single-integer form canonicals to dotted-decimal
+    auto p = ipv4_address::from_string("1");
+    REQUIRE(p.has_value());
+    CHECK(p->to_string() == std::string("0.0.0.1"));
+
+    // Ordering within IPv4 space
+    CHECK(ipv4_address{1,2,3,4} < ipv4_address{1,2,3,5});
+    CHECK(ipv4_address{10,0,0,1} < ipv4_address{10,0,0,2});
+}
 TEST_SUITE_END();

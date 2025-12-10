@@ -8,12 +8,17 @@
 #include <cppcoro/sync_wait.hpp>
 #include <cppcoro/when_all_ready.hpp>
 #include <cppcoro/fmap.hpp>
+#include <cppcoro/cancellation_token.hpp>
+#include <cppcoro/cancellation_source.hpp>
+#include <cppcoro/operation_cancelled.hpp>
 
 #include "counted.hpp"
 
 #include <ostream>
 #include <string>
 #include <type_traits>
+#include <memory>
+#include <stdexcept>
 
 #include "doctest/cppcoro_doctest.h"
 
@@ -344,6 +349,116 @@ TEST_CASE("lots of synchronous completions doesn't result in stack-overflow")
 	};
 
 	cppcoro::sync_wait(run());
+}
+
+TEST_CASE("exception propagation from task")
+{
+    using cppcoro::task;
+
+    auto throws_now = []() -> task<int>
+    {
+        throw std::runtime_error{"boom"};
+        co_return 0;
+    };
+
+    // sync_wait should propagate the exception
+    CHECK_THROWS_AS(cppcoro::sync_wait(throws_now()), const std::runtime_error&);
+
+    // co_await inside another task should also propagate
+    cppcoro::sync_wait([&]() -> task<>
+    {
+        CHECK_THROWS_AS(co_await throws_now(), const std::runtime_error&);
+        co_return;
+    }());
+}
+
+TEST_CASE("cancellation observed by task")
+{
+    using cppcoro::task;
+    using cppcoro::cancellation_source;
+    using cppcoro::operation_cancelled;
+
+    // Not cancelled path does not throw
+    {
+        cancellation_source s;
+        auto t = [tok = s.token()]() -> task<>
+        {
+            // Should not throw if not cancelled
+            tok.throw_if_cancellation_requested();
+            co_return;
+        };
+        CHECK_NOTHROW(cppcoro::sync_wait(t()));
+    }
+
+    // Cancellation requested before start throws
+    {
+        cancellation_source s;
+        auto t = [tok = s.token()]() -> task<>
+        {
+            tok.throw_if_cancellation_requested();
+            co_return;
+        };
+        s.request_cancellation();
+        CHECK_THROWS_AS(cppcoro::sync_wait(t()), const operation_cancelled&);
+    }
+}
+
+TEST_CASE("move-only result type")
+{
+    using cppcoro::task;
+
+    auto make_ptr = []() -> task<std::unique_ptr<int>>
+    {
+        co_return std::make_unique<int>(42);
+    };
+
+    // sync_wait returns a move-only result
+    auto p = cppcoro::sync_wait(make_ptr());
+    REQUIRE(p);
+    CHECK(*p == 42);
+
+    // co_await should also move out the value
+    cppcoro::sync_wait([&]() -> task<>
+    {
+        auto q = co_await make_ptr();
+        REQUIRE(q);
+        CHECK(*q == 42);
+        co_return;
+    }());
+}
+
+TEST_CASE("task can be moved and awaited")
+{
+    using cppcoro::task;
+    using cppcoro::single_consumer_event;
+
+    single_consumer_event evt;
+
+    auto make = [&]() -> task<int>
+    {
+        co_await evt;
+        co_return 7;
+    };
+
+    task<int> t = make();
+
+    // Move-construct and await moved-to task
+    task<int> u = std::move(t);
+
+    int result = 0;
+    cppcoro::sync_wait(cppcoro::when_all_ready(
+        [&]() -> task<>
+        {
+            result = co_await u;
+            co_return;
+        }(),
+        [&]() -> task<>
+        {
+            evt.set();
+            co_return;
+        }()));
+
+    CHECK(result == 7);
 }
 
 TEST_SUITE_END();

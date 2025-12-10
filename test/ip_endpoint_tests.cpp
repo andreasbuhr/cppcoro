@@ -52,5 +52,35 @@ TEST_CASE("from_string" * doctest::skip{ isMsvc15_5X86Optimised })
 			443 });
 }
 
+TEST_CASE("round-trip and ordering" * doctest::skip{ isMsvc15_5X86Optimised })
+{
+    // Round-trip
+    auto check_round_trip = [](const char* s) {
+        auto p = ip_endpoint::from_string(s);
+        REQUIRE(p.has_value());
+        auto canon = p->to_string();
+        auto p2 = ip_endpoint::from_string(canon);
+        REQUIRE(p2.has_value());
+        CHECK(*p == *p2);
+        CHECK(p2->to_string() == canon);
+    };
+
+    check_round_trip("192.168.2.254:80");
+    check_round_trip("[2001:db8:85a3::8a2e:370:7334]:22");
+
+    // Invalid ports/whitespace
+    CHECK(ip_endpoint::from_string("192.168.1.1:65536") == std::nullopt);
+    CHECK(ip_endpoint::from_string("[::1]:65536") == std::nullopt);
+    CHECK(ip_endpoint::from_string(" 192.168.1.1:80") == std::nullopt);
+    CHECK(ip_endpoint::from_string("[::1]:80 ") == std::nullopt);
+
+    // Ordering: IPv4 < IPv6, and within family compare address/port
+    ip_endpoint v4a = ipv4_endpoint{ ipv4_address{127,0,0,1}, 1 };
+    ip_endpoint v4b = ipv4_endpoint{ ipv4_address{127,0,0,1}, 2 };
+    ip_endpoint v6 = ipv6_endpoint{ ipv6_address{0,0,0,0,0,0,0,1}, 1 };
+    CHECK(v4a < v6);
+    CHECK(v4a < v4b);
+}
+
 TEST_SUITE_END();
 

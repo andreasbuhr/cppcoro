@@ -52,4 +52,30 @@ TEST_CASE("from_string" * doctest::skip{ isMsvc15_5X86Optimised })
 		ipv6_endpoint{ ipv6_address{ 0x20010db885a30000, 0x00008a2e03707334 }, 65535 });
 }
 
+TEST_CASE("round-trip and invalid ports/brackets" * doctest::skip{ isMsvc15_5X86Optimised })
+{
+    // Round-trip canonicalisation
+    auto check_round_trip = [](const char* s) {
+        auto p = ipv6_endpoint::from_string(s);
+        REQUIRE(p.has_value());
+        auto canon = p->to_string();
+        auto p2 = ipv6_endpoint::from_string(canon);
+        REQUIRE(p2.has_value());
+        CHECK(*p == *p2);
+        CHECK(p2->to_string() == canon);
+    };
+
+    check_round_trip("[::1]:1");
+    check_round_trip("[2001:db8:85a3::8a2e:370:7334]:22");
+
+    // Invalid port ranges and whitespace
+    CHECK(ipv6_endpoint::from_string("[::1]:65536") == std::nullopt);
+    CHECK(ipv6_endpoint::from_string(" [::1]:80") == std::nullopt);
+    CHECK(ipv6_endpoint::from_string("[::1]:80 ") == std::nullopt);
+
+    // Malformed brackets
+    CHECK(ipv6_endpoint::from_string("[[::1]]:80") == std::nullopt);
+    CHECK(ipv6_endpoint::from_string("[::1:80") == std::nullopt);
+}
+
 TEST_SUITE_END();
