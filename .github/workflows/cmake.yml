@@ -221,6 +221,15 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux clang-20 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-20",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
             name: "Windows MSVC 2017 (x64) C++17",
             os: windows-2019,
             buildtype: Release,
@@ -407,6 +416,17 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 19
         sudo apt-get install libc++-19-dev libc++abi-19-dev libunwind-19-dev
+
+    - name: Install Clang 20
+      id: install_clang_20
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-20' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 20
+        sudo apt-get install libc++-20-dev libc++abi-20-dev libunwind-20-dev
 
     - name: Install g++ 10
       id: install_gcc_10
