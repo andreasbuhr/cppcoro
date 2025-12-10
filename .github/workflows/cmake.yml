@@ -306,6 +306,24 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Windows MSVC 2026 (x64) C++17",
+            os: windows-2022,
+            buildtype: Release,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2026/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 17,
+            msvcver: 2026,
+          }
+          - {
+            name: "Windows MSVC 2026 (x64) C++20",
+            os: windows-2022,
+            buildtype: Release,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2026/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+            msvcver: 2026,
+          }
+          - {
             name: "Msys2/CLANG",
             os: windows-2019,
             buildtype: Release,
@@ -507,6 +525,14 @@ jobs:
         choco install visualstudio2017community
         choco install visualstudio2017-workload-nativedesktop
         choco install visualstudio2017-workload-vctools
+
+    - name: Install MSVC 2026 (Visual Studio 2026 Community with C++ tools)
+      id: install_msvc_2026
+      if: startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2026 )
+      shell: powershell
+      run: |
+        choco install visualstudio2026community --yes --no-progress --execution-timeout=7200 `
+          --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --passive --locale en-US"
 
     - name: MSYS2 - Configure, Build & Test
       id: install_msys2
