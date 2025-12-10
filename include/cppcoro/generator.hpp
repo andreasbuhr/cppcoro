@@ -11,6 +11,7 @@
 #include <exception>
 #include <iterator>
 #include <functional>
+#include <optional>
 
 namespace cppcoro
 {
@@ -35,18 +36,30 @@ namespace cppcoro
 			constexpr cppcoro::suspend_always initial_suspend() const noexcept { return {}; }
 			constexpr cppcoro::suspend_always final_suspend() const noexcept { return {}; }
 
-			template<
-				typename U = T,
-				std::enable_if_t<!std::is_rvalue_reference<U>::value, int> = 0>
-			cppcoro::suspend_always yield_value(std::remove_reference_t<T>& value) noexcept
+			template<typename U>
+			cppcoro::suspend_always yield_value(U&& value) noexcept
 			{
-				m_value = std::addressof(value);
-				return {};
-			}
-
-			cppcoro::suspend_always yield_value(std::remove_reference_t<T>&& value) noexcept
-			{
-				m_value = std::addressof(value);
+				if constexpr (std::is_lvalue_reference_v<T>)
+				{
+					if constexpr (std::is_lvalue_reference_v<U>)
+					{
+						// Yielding an lvalue for a generator of lvalue-reference: just reference it.
+						m_storage = std::nullopt;
+						m_value = std::addressof(value);
+					}
+					else
+					{
+						// Yielding an rvalue for a generator of lvalue-reference: materialise to extend lifetime.
+						m_storage.emplace(std::forward<U>(value));
+						m_value = std::addressof(*m_storage);
+					}
+				}
+				else
+				{
+					// For value- or rvalue-reference-yielding generators, always materialise.
+					m_storage.emplace(std::forward<U>(value));
+					m_value = std::addressof(*m_storage);
+				}
 				return {};
 			}
 
@@ -80,6 +93,8 @@ namespace cppcoro
 
 			pointer_type m_value{};
 			std::exception_ptr m_exception{};
+			// For non-reference T we may need to materialise rvalues across suspension.
+			std::optional<value_type> m_storage{};
 
 		};
 
@@ -150,6 +165,8 @@ namespace cppcoro
 				return m_coroutine.promise().value();
 			}
 
+			template<typename R = reference,
+				std::enable_if_t<std::is_lvalue_reference_v<R>, int> = 0>
 			pointer operator->() const noexcept
 			{
 				return std::addressof(operator*());

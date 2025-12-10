@@ -12,12 +12,22 @@
 #include <string>
 #include <forward_list>
 #include <cstdint>
+#include <type_traits>
+#include <utility>
 
 #include "doctest/cppcoro_doctest.h"
 
 TEST_SUITE_BEGIN("generator");
 
 using cppcoro::generator;
+
+namespace {
+    // Helper to detect presence of operator-> on iterator type
+    template<typename It, typename = void>
+    struct has_arrow : std::false_type {};
+    template<typename It>
+    struct has_arrow<It, std::void_t<decltype(std::declval<const It&>().operator->())>> : std::true_type {};
+}
 
 TEST_CASE("default-constructed generator is empty sequence")
 {
@@ -127,6 +137,73 @@ TEST_CASE("value-category of fmap() matches reference type")
     consume([]() -> generator<const int&> { co_yield 123; }() | fmap(checkIsConstLvalue));
     consume([]() -> generator<int&&> { co_yield 123; }() | fmap(checkIsRvalue));
     consume([]() -> generator<const int&&> { co_yield 123; }() | fmap(checkIsConstRvalue));
+}
+
+TEST_CASE("iterator arrow for lvalue yields and disabled for rvalue yields")
+{
+    SUBCASE("arrow works for generator<int>")
+    {
+        auto g = []() -> generator<int>
+        {
+            co_yield 10;
+        }();
+        auto it = g.begin();
+        REQUIRE(it != g.end());
+        auto p = it.operator->();
+        CHECK(p == &*it);
+        CHECK(*p == 10);
+    }
+
+    SUBCASE("arrow works for generator<int&>")
+    {
+        int x = 42;
+        auto g = [&]() -> generator<int&>
+        {
+            co_yield x;
+        }();
+        auto it = g.begin();
+        REQUIRE(it != g.end());
+        CHECK(it.operator->() == &x);
+        CHECK(*it == 42);
+    }
+
+    SUBCASE("arrow is disabled for generator<int&&>")
+    {
+        using It = generator<int&&>::iterator;
+        static_assert(!has_arrow<It>::value, "operator-> must be disabled for rvalue reference yields");
+        // Still ensure rvalue-yielding generator produces correct values
+        auto g = []() -> generator<int&&>
+        {
+            int v = 7;
+            co_yield std::move(v);
+        }();
+        int count = 0;
+        for (auto&& v : g)
+        {
+            CHECK(v == 7);
+            ++count;
+        }
+        CHECK(count == 1);
+    }
+}
+
+TEST_CASE("yielding rvalues produces stable values across suspension")
+{
+    auto make = []() -> generator<std::string>
+    {
+        co_yield std::string{"a"};
+        co_yield std::string{"bc"};
+    };
+
+    auto gen = make();
+    auto it = gen.begin();
+    REQUIRE(it != gen.end());
+    CHECK(*it == std::string{"a"});
+    ++it;
+    REQUIRE(it != gen.end());
+    CHECK(*it == std::string{"bc"});
+    ++it;
+    CHECK(it == gen.end());
 }
 
 TEST_CASE("generator doesn't start until its called")
