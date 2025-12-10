@@ -306,6 +306,24 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Windows MSVC 2026 (x64) C++17",
+            os: windows-2022,
+            buildtype: Release,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2026/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 17,
+            msvcver: 2026,
+          }
+          - {
+            name: "Windows MSVC 2026 (x64) C++20",
+            os: windows-2022,
+            buildtype: Release,
+            cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2026/Community/VC/Auxiliary/Build/vcvars64.bat",
+            cxxver: 20,
+            msvcver: 2026,
+          }
+          - {
             name: "Msys2/CLANG",
             os: windows-2019,
             buildtype: Release,
@@ -508,6 +526,16 @@ jobs:
         choco install visualstudio2017-workload-nativedesktop
         choco install visualstudio2017-workload-vctools
 
+    - name: Install MSVC 2026 (Visual Studio 2026 Community with C++ tools)
+      id: install_msvc_2026
+      if: startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2026 )
+      shell: powershell
+      run: |
+        choco feature disable --name="'exitOnRebootDetected'"
+        choco install visualstudio2026community
+        choco install visualstudio2026-workload-nativedesktop
+        choco install visualstudio2026-workload-vctools
+
     - name: MSYS2 - Configure, Build & Test
       id: install_msys2
       if: (startsWith(matrix.config.os, 'windows-2019') && contains(matrix.config.mingw, 'MINGW'))
@@ -529,8 +557,24 @@ jobs:
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory "build"
 
+    - name: Configure CMake (MSVC)
+      if: (!contains(matrix.config.mingw, 'MINGW')) && startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' )
+      shell: cmd
+      working-directory: build
+      run: |
+        if not "${{ matrix.config.environment_script }}"=="" (
+          call "${{ matrix.config.environment_script }}"
+        )
+        cmake %GITHUB_WORKSPACE% ^
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.buildtype }} ^
+          -DCMAKE_CXX_STANDARD=${{ matrix.config.cxxver }} ^
+          -DBUILD_TESTING=ON ^
+          -DCMAKE_CXX_FLAGS="${{ matrix.config.cxx_flags }}" ^
+          -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.config.exe_linker_flags }}" ^
+          -DCMAKE_VERBOSE_MAKEFILE=ON
+
     - name: Configure CMake
-      if: (!contains(matrix.config.mingw, 'MINGW'))
+      if: (!contains(matrix.config.mingw, 'MINGW')) && !(startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ))
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
       shell: bash
@@ -541,9 +585,6 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: |
-        # run environment setup script if any
-        [ -n "${{ matrix.config.environment_script }}" ] && "${{ matrix.config.environment_script }}"
-
         cmake $GITHUB_WORKSPACE \
           -DCMAKE_BUILD_TYPE=${{ matrix.config.buildtype }} \
           -DCMAKE_CXX_STANDARD=${{ matrix.config.cxxver }} \
@@ -552,15 +593,35 @@ jobs:
           -DCMAKE_EXE_LINKER_FLAGS=${{ matrix.config.exe_linker_flags }} \
           -DCMAKE_VERBOSE_MAKEFILE=ON
 
+    - name: Build (MSVC)
+      if: (!contains(matrix.config.mingw, 'MINGW')) && startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' )
+      working-directory: build
+      shell: cmd
+      run: |
+        if not "${{ matrix.config.environment_script }}"=="" (
+          call "${{ matrix.config.environment_script }}"
+        )
+        cmake --build . --config ${{ matrix.config.buildtype }}
+
     - name: Build
-      if: (!contains(matrix.config.mingw, 'MINGW'))
+      if: (!contains(matrix.config.mingw, 'MINGW')) && !(startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ))
       working-directory: build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config ${{ matrix.config.buildtype }}
 
+    - name: Test (MSVC)
+      if: (!contains(matrix.config.mingw, 'MINGW')) && startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' )
+      working-directory: build
+      shell: cmd
+      run: |
+        if not "${{ matrix.config.environment_script }}"=="" (
+          call "${{ matrix.config.environment_script }}"
+        )
+        ctest --output-on-failure -C ${{ matrix.config.buildtype }}
+
     - name: Test
-      if: (!contains(matrix.config.mingw, 'MINGW'))
+      if: (!contains(matrix.config.mingw, 'MINGW')) && !(startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ))
       working-directory: build
       shell: bash
       # Execute tests defined by the CMake configuration.  
