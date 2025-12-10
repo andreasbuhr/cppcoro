@@ -11,6 +11,7 @@
 #include <exception>
 #include <iterator>
 #include <functional>
+#include <optional>
 
 namespace cppcoro
 {
@@ -40,13 +41,16 @@ namespace cppcoro
 				std::enable_if_t<!std::is_rvalue_reference<U>::value, int> = 0>
 			cppcoro::suspend_always yield_value(std::remove_reference_t<T>& value) noexcept
 			{
+				m_storage = std::nullopt;
 				m_value = std::addressof(value);
 				return {};
 			}
 
 			cppcoro::suspend_always yield_value(std::remove_reference_t<T>&& value) noexcept
 			{
-				m_value = std::addressof(value);
+				// Store rvalues in promise-owned storage to ensure lifetime spans the suspension.
+				m_storage.emplace(std::move(value));
+				m_value = std::addressof(*m_storage);
 				return {};
 			}
 
@@ -80,6 +84,8 @@ namespace cppcoro
 
 			pointer_type m_value{};
 			std::exception_ptr m_exception{};
+			// For non-reference T we may need to materialise rvalues across suspension.
+			std::optional<value_type> m_storage{};
 
 		};
 
@@ -150,6 +156,8 @@ namespace cppcoro
 				return m_coroutine.promise().value();
 			}
 
+			template<typename R = reference,
+				std::enable_if_t<std::is_lvalue_reference_v<R>, int> = 0>
 			pointer operator->() const noexcept
 			{
 				return std::addressof(operator*());
