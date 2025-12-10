@@ -14,6 +14,8 @@ jobs:
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    # Allow specifying a container per-matrix to avoid duplicating jobs
+    container: ${{ matrix.config.container }}
 
     strategy:
       fail-fast: false
@@ -104,15 +106,17 @@ jobs:
             cxxver: 20,
           }
           - {
-            name: "Linux g++ 15 C++17",
+            name: "Linux g++ 15 (Debian) C++17",
             os: ubuntu-24.04,
+            container: debian:testing,
             buildtype: Release,
             cxx: "g++-15",
             cxxver: 17,
           }
           - {
-            name: "Linux g++ 15 C++20",
+            name: "Linux g++ 15 (Debian) C++20",
             os: ubuntu-24.04,
+            container: debian:testing,
             buildtype: Release,
             cxx: "g++-15",
             cxxver: 20,
@@ -488,12 +492,20 @@ jobs:
 
     - name: Install g++ 15
       id: install_gcc_15
-      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-15' )
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-15' ) && ( !matrix.config.container )
       shell: bash
       working-directory: ${{ env.HOME }}
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
         sudo apt-get install g++-15
+
+    - name: Install GCC 15 and tools (Debian container)
+      if: matrix.config.container == 'debian:testing' && matrix.config.cxx == 'g++-15'
+      shell: bash
+      run: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y \
+          g++-15 cmake ninja-build build-essential pkg-config
 
     - name: Install MSVC 2017
       id: install_msvc_2017
@@ -563,3 +575,4 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --output-on-failure -C ${{ matrix.config.buildtype }}
+
