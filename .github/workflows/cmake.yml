@@ -104,6 +104,20 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux g++ 15 C++17",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "g++-15",
+            cxxver: 17,
+          }
+          - {
+            name: "Linux g++ 15 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "g++-15",
+            cxxver: 20,
+          }
+          - {
             name: "Linux clang-13 C++17",
             os: ubuntu-22.04,
             buildtype: Release,
@@ -471,6 +485,15 @@ jobs:
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
         sudo apt-get install g++-14
+
+    - name: Install g++ 15
+      id: install_gcc_15
+      if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-15' )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
+        sudo apt-get install g++-15
 
     - name: Install MSVC 2017
       id: install_msvc_2017
