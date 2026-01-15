@@ -106,6 +106,13 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux g++ 14 C++20 ARM",
+            os: ubuntu-24.04-arm,
+            buildtype: Release,
+            cxx: "g++-14",
+            cxxver: 20,
+          }
+          - {
             name: "Linux g++ 15 (Debian) C++17",
             os: ubuntu-24.04,
             container: debian:testing,
