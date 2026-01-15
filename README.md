@@ -9,7 +9,7 @@ library. The differences to the original cppcoro are:
 * CMake as build system instead of cake.
 * CI in Github actions instead of appveyor
 
-andreasbuhr/cppcoro is currently tested with g++-10.2, g++-11.1, g++-12, g++-13, g++-14, g++-15, clang-13, clang-14, clang-15, clang-16, clang-17, clang-18, clang-19, clang-20, MSVC-2017, MSVC-2019, MSVC-2022, and MSVC-2026.
+andreasbuhr/cppcoro is currently tested with g++-10.2, g++-11.1, g++-12, g++-13, g++-14, g++-15, clang-13, clang-14, clang-15, clang-16, clang-17, clang-18, clang-19, clang-20, clang-21, MSVC-2017, MSVC-2019, MSVC-2022, and MSVC-2026.
 Current build status for master branch: [![Actions Status](https://github.com/andreasbuhr/cppcoro/workflows/CMake/badge.svg)](https://github.com/andreasbuhr/cppcoro/actions).
 
 Most of the changes are offered upstream:
