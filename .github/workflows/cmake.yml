@@ -129,6 +129,22 @@ jobs:
             cxxver: 20,
           }
           - {
+            name: "Linux g++ 15 (Debian) C++23",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-15",
+            cxxver: 23,
+          }
+          - {
+            name: "Linux g++ 15 (Debian) C++26",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-15",
+            cxxver: 26,
+          }
+          - {
             name: "Linux clang-13 C++17",
             os: ubuntu-22.04,
             buildtype: Release,
@@ -253,6 +269,33 @@ jobs:
             cxx_flags: -stdlib=libc++,
             exe_linker_flags: -lc++,
             cxxver: 20,
+          }
+          - {
+            name: "Linux clang-21 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-21",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-21 C++23",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-21",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 23,
+          }
+          - {
+            name: "Linux clang-21 C++26",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-21",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 26,
           }
           - {
             name: "Windows MSVC 2017 (x64) C++17",
