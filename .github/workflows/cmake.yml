@@ -299,7 +299,7 @@ jobs:
           }
           - {
             name: "Windows MSVC 2017 (x64) C++17",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat",
@@ -308,7 +308,7 @@ jobs:
           }
           - {
             name: "Windows MSVC 2017 (x64) C++20",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvars64.bat",
@@ -317,7 +317,7 @@ jobs:
           }
           - {
             name: "Windows MSVC 2019 (x64) C++17",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
@@ -325,7 +325,7 @@ jobs:
           }
           - {
             name: "Windows MSVC 2019 (x64) C++20",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
@@ -375,7 +375,7 @@ jobs:
           }
           - {
             name: "Msys2/CLANG",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             mingw: MINGW64,
             mingw-arch: x86_64,
@@ -384,7 +384,7 @@ jobs:
           }
           - {
             name: "Msys2/GCC",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Release,
             mingw: MINGW64,
             mingw-arch: x86_64,
@@ -393,7 +393,7 @@ jobs:
           }
           - {
             name: "Msys2/debugCLANG",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Debug,
             mingw: MINGW64,
             mingw-arch: x86_64,
@@ -402,7 +402,7 @@ jobs:
           }
           - {
             name: "Msys2/debugGCC",
-            os: windows-2019,
+            os: windows-2022,
             buildtype: Debug,
             mingw: MINGW64,
             mingw-arch: x86_64,
@@ -579,13 +579,24 @@ jobs:
 
     - name: Install MSVC 2017
       id: install_msvc_2017
-      if: startsWith(matrix.config.os, 'windows-2019') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2017 )
+      if: startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2017 )
       shell: bash
       working-directory: ${{ env.HOME }}
       run: |
         choco install visualstudio2017community
         choco install visualstudio2017-workload-nativedesktop
         choco install visualstudio2017-workload-vctools
+
+    - name: Install MSVC 2019
+      id: install_msvc_2019
+      if: startsWith(matrix.config.os, 'windows-') && ( matrix.config.cxx == 'cl' ) && ( matrix.config.msvcver == 2019 )
+      shell: bash
+      working-directory: ${{ env.HOME }}
+      run: |
+        choco feature disable --name="'exitOnRebootDetected'"
+        choco install visualstudio2019community
+        choco install visualstudio2019-workload-nativedesktop
+        choco install visualstudio2019-workload-vctools
 
     - name: Install MSVC 2026 (Visual Studio 2026 Community with C++ tools)
       id: install_msvc_2026
@@ -599,7 +610,7 @@ jobs:
 
     - name: MSYS2 - Configure, Build & Test
       id: install_msys2
-      if: (startsWith(matrix.config.os, 'windows-2019') && contains(matrix.config.mingw, 'MINGW'))
+      if: (startsWith(matrix.config.os, 'windows-20') && contains(matrix.config.mingw, 'MINGW'))
       shell: msys2 {0}
       working-directory: ${{ env.HOME }}
       run: |
