@@ -18,11 +18,20 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
+if(CXX_COROUTINES_HEADER STREQUAL coroutine)
+	set(CXX_COROUTINES_COMPONENT Final)
+else()
+	set(CXX_COROUTINES_COMPONENT Experimental)
+endif()
+
 export(EXPORT cppcoroTargets
   FILE "${PROJECT_BINARY_DIR}/cppcoro/cppcoroTargets.cmake"
   NAMESPACE cppcoro::)
 configure_file(cmake/cppcoroConfig.cmake
     "${PROJECT_BINARY_DIR}/cppcoro/cppcoroConfig.cmake"
+    @ONLY)
+configure_file(cmake/FindCoroutines.cmake
+    "${PROJECT_BINARY_DIR}/cppcoro/FindCoroutines.cmake"
     COPYONLY)
 
 set(config_package_location lib/cmake/cppcoro)
