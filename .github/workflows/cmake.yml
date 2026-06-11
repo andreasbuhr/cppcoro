@@ -145,6 +145,38 @@ jobs:
             cxxver: 26,
           }
           - {
+            name: "Linux g++ 16 (Debian) C++17",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-16",
+            cxxver: 17,
+          }
+          - {
+            name: "Linux g++ 16 (Debian) C++20",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-16",
+            cxxver: 20,
+          }
+          - {
+            name: "Linux g++ 16 (Debian) C++23",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-16",
+            cxxver: 23,
+          }
+          - {
+            name: "Linux g++ 16 (Debian) C++26",
+            os: ubuntu-24.04,
+            container: debian:testing,
+            buildtype: Release,
+            cxx: "g++-16",
+            cxxver: 26,
+          }
+          - {
             name: "Linux clang-13 C++17",
             os: ubuntu-22.04,
             buildtype: Release,
@@ -296,6 +328,24 @@ jobs:
             cxx_flags: -stdlib=libc++,
             exe_linker_flags: -lc++,
             cxxver: 26,
+          }
+          - {
+            name: "Linux clang-22 C++20",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-22",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 20,
+          }
+          - {
+            name: "Linux clang-22 C++23",
+            os: ubuntu-24.04,
+            buildtype: Release,
+            cxx: "clang++-22",
+            cxx_flags: -stdlib=libc++,
+            exe_linker_flags: -lc++,
+            cxxver: 23,
           }
           - {
             name: "Linux clang-22 C++26",
@@ -596,6 +646,14 @@ jobs:
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y \
           g++-15 cmake ninja-build build-essential pkg-config
+
+    - name: Install GCC 16 and tools (Debian container)
+      if: matrix.config.container == 'debian:testing' && matrix.config.cxx == 'g++-16'
+      shell: bash
+      run: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y \
+          g++-16 cmake ninja-build build-essential pkg-config
 
     - name: Install MSVC 2017
       id: install_msvc_2017
